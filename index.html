@@ -2,40 +2,36 @@
 <html lang="my">
 <head>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-FLD2N19P57"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-FLD2N19P57');
-</script>
-  
   <script>
-  function checkPassword() {
-    var password = "";
-    var correctPassword = "pandalay"; // ဤနေရာတွင် Password ပြောင်းရန်
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-FLD2N19P57');
+  </script>
 
-    // Password မမှန်မချင်း ပတ်ချာလည် မေးနေမည်
-    while (password !== correctPassword) {
-      password = prompt("Zayar linရဲ့ နှလုံးသားသို့ ဝင်‌ရောက်ကြည့်ရူရန် Password ရိုက်ထည့်ပါ:");
+  <script>
+    function checkPassword() {
+      var password = "";
+      var correctPassword = "pandalay"; 
 
-      // Cancel နှိပ်ရင်ဖြစ်ဖြစ်၊ ဘာမှမရိုက်ရင်ဖြစ်ဖြစ် အပြင်ကို ပြန်ထုတ်မည်
-      if (password === null || password === "") {
-        alert("Password ရိုက်ထည့်ရန် လိုအပ်ပါသည်။");
-        // Google သို့မဟုတ် အခြားစာမျက်နှာသို့ ပို့ပစ်ခြင်းဖြင့် Page ထဲ ပေးမဝင်တော့ပါ
-        window.location.href = "https://zayarlin-ue.github.io/panda/";
-        return; 
-      }
+      while (password !== correctPassword) {
+        password = prompt("Zayar lin ရဲ့ နှလုံးသားသို့ ဝင်ရောက်ကြည့်ရှုရန် Password ရိုက်ပါ:");
 
-      if (password !== correctPassword) {
-        alert("Password မှားနေပါသည်။ ပြန်ကြိုးစားပါ။");
+        if (password === null || password === "") {
+          alert("Password ရိုက်ထည့်ရန် လိုအပ်ပါသည်။");
+          window.location.href = "https://zayarlin-ue.github.io/panda/"; // လုံခြုံရေးအရ အပြင်ထုတ်လိုက်ခြင်း
+          return;
+        }
+
+        if (password !== correctPassword) {
+          alert("Password မှားနေပါသည်။ ပြန်ကြိုးစားပါ။");
+        }
       }
     }
-  }
-
-  // Website စပွင့်တာနဲ့ ဒီ Function ကို Run မယ်
-  checkPassword();
-</script>
+    // Function ကို စတင်ခေါ်ယူခြင်း
+    checkPassword();
+  </script>
+</head>
 
   <meta charset="UTF-8"> <meta name="viewport"
 content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
