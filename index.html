@@ -2,12 +2,32 @@
 <html lang="my">
 <head>
   <script>
-  var password = prompt("ကျေးဇူးပြု၍ Password ထည့်ပေးပါ:");
-  if (password != "pandalay") {
-    alert("Password မှားနေပါသည်။");
-    window.location.href = "https://google.com"; // မှားရင် တခြားနေရာကို ပို့ပေးမယ်
+  function checkPassword() {
+    var password = "";
+    var correctPassword = "သင်ပေးချင်တဲ့Password"; // ဤနေရာတွင် Password ပြောင်းရန်
+
+    // Password မမှန်မချင်း ပတ်ချာလည် မေးနေမည်
+    while (password !== correctPassword) {
+      password = prompt("ဤ Page ကို ကြည့်ရန် Password ရိုက်ထည့်ပါ:");
+
+      // Cancel နှိပ်ရင်ဖြစ်ဖြစ်၊ ဘာမှမရိုက်ရင်ဖြစ်ဖြစ် အပြင်ကို ပြန်ထုတ်မည်
+      if (password === null || password === "") {
+        alert("Password ရိုက်ထည့်ရန် လိုအပ်ပါသည်။");
+        // Google သို့မဟုတ် အခြားစာမျက်နှာသို့ ပို့ပစ်ခြင်းဖြင့် Page ထဲ ပေးမဝင်တော့ပါ
+        window.location.href = "https://www.google.com";
+        return; 
+      }
+
+      if (password !== correctPassword) {
+        alert("Password မှားနေပါသည်။ ပြန်ကြိုးစားပါ။");
+      }
+    }
   }
+
+  // Website စပွင့်တာနဲ့ ဒီ Function ကို Run မယ်
+  checkPassword();
 </script>
+
   <meta charset="UTF-8"> <meta name="viewport"
 content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>💕 ကောက်စိန်လေး(ပန်ဒါလေး) ရဲ့မှတ်တမ်း😜 💕</title>
