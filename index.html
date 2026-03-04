@@ -10,6 +10,28 @@
   </script>
   <link rel="icon" type="image/png" href="favicon.jpg"
 </head>
+  <script>
+    function checkPassword() {
+      var password = "";
+      var correctPassword = "pandalay"; 
+
+      while (password !== correctPassword) {
+        password = prompt("Zayar lin ရဲ့ နှလုံးသားသို့ ဝင်ရောက်ကြည့်ရှုရန် Anni date ရိုက်ပါ:");
+
+        if (password === null || password === "") {
+          alert("Anniversary date ရိုက်ထည့်ရန် လိုအပ်ပါသည်။");
+          window.location.href = "https://zayarlin-ue.github.io/panda/";
+          return;
+        }
+
+        if (password !== correctPassword) {
+          alert("Anniversary date မှားနေပါသည်။ ပြန်ကြိုးစားပါ။");
+        }
+      }
+    }
+    // Function ကို စတင်ခေါ်ယူခြင်း
+    checkPassword();
+  </script>
 
 
   <meta charset="UTF-8"> <meta name="viewport"
