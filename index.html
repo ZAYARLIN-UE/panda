@@ -12,25 +12,36 @@
 </head>
   <script>
     function checkPassword() {
-      var password = "";
-      var correctPassword = "1542024"; 
+  var username = prompt("သင့်အမည်ကို အရင်ရိုက်ထည့်ပါ (မှတ်တမ်းအတွက်ပါ):");
+  var password = "";
+  var correctPassword = "1542024";
 
-      while (password !== correctPassword) {
-        password = prompt("Zayar lin ရဲ့ နှလုံးသားသို့ ဝင်ရောက်ကြည့်ရှုရန် Anni date ရိုက်ပါ:");
+  // အမည်မရိုက်ရင် ရှေ့ဆက်မပေးဘဲ ပြန်မေးမယ်
+  if (username === null || username === "") {
+    username = "Guest User";
+  }
 
-        if (password === null || password === "") {
-          alert("Anniversary date ရိုက်ထည့်ရန် လိုအပ်ပါသည်။");
-          window.location.href = "https://google.com";
-          return;
-        }
+  // Google Analytics ဆီကို ဘယ်သူဝင်လဲဆိုတဲ့ နာမည် ပို့ပေးခြင်း
+  gtag('event', 'user_login', {
+    'user_name': username
+  });
 
-        if (password !== correctPassword) {
-          alert("Anniversary date မှားနေပါသည်။ ပြန်ကြိုးစားပါ။");
-        }
-      }
+  while (password !== correctPassword) {
+    password = prompt(username + " ရေ... Zayar lin ရဲ့ နှလုံးသားသို့ ဝင်ရန် Anni date ရိုက်ပါ:");
+
+    if (password === null || password === "") {
+      alert("Anniversary date ရိုက်ထည့်ရန် လိုအပ်ပါသည်။");
+      window.location.href = "https://google.com";
+      return;
     }
-    // Function ကို စတင်ခေါ်ယူခြင်း
-    checkPassword();
+
+    if (password !== correctPassword) {
+      alert("Anniversary date မှားနေပါသည်။ ပြန်ကြိုးစားပါ။");
+    }
+  }
+}
+// Function ကို စတင်ခေါ်ယူခြင်း
+checkPassword();
   </script>
 
 
