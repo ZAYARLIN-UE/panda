@@ -10,50 +10,6 @@
   </script>
   <link rel="icon" type="image/jpeg" href="./favicon.jpg">
 </head>
-  <script>
-    function checkPassword() {
-      var username = prompt("သင့်အမည်ကို အရင်ရိုက်ထည့်ပါ (မှတ်တမ်းအတွက်ပါ):");
-      var password = "";
-
-      // အမည်မရိုက်ရင် ရှေ့ဆက်မပေးဘဲ ပြန်မေးမယ်
-      if (username === null || username === "") {
-        username = "Guest User";
-      }
-
-      // Google Analytics ဆီကို ဘယ်သူဝင်လဲဆိုတဲ့ နာမည် ပို့ပေးခြင်း
-      gtag('event', 'user_login', {
-        'user_name': username
-      });
-
-      var isValid = false;
-      while (!isValid) {
-        password = prompt(username + " ရေ... Anniversary date ရိုက်ထည့်ပါ:");
-
-        if (password === null || password === "") {
-          alert("Anniversary date ရိုက်ထည့်ရန် လိုအပ်ပါသည်။");
-          window.location.href = "https://zayarlin-ue.github.io/panda/";
-          return;
-        }
-
-        // Password logic ခွဲခြားခြင်း
-        if (password === "1542024") {
-          alert("ကောက်စိန်လေးရဲ့ အမှတ်တရ စာမျက်နှာသို့... 💕");
-          window.location.href = "index.html";
-          isValid = true;
-        } 
-        else if (password === "1782009") {
-          alert("သီးသန့် Chat Room သို့... 💬");
-          window.location.href = "pandalaychat.html";
-          isValid = true;
-        } 
-        else {
-          alert("Anniversary date မှားနေပါသည်။ ပြန်ကြိုးစားပါ။");
-        }
-      }
-    }
-    // Function ကို စတင်ခေါ်ယူခြင်း
-    checkPassword();
-  </script>
   <meta charset="UTF-8"> <meta name="viewport"
 content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>💕 ကောက်စိန်လေး(ပန်ဒါလေး) ရဲ့လျှို့ဝှက်မှတ်တမ်း😜 💕</title>
