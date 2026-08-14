@@ -112,9 +112,9 @@
     </div>
     <div class="title" id="videoTitle" style="font-size: 15px; margin-bottom: 10px;"></div>
     <div class="controls">
-      <button class="btn btn-nav" onclick="prevVideo()">⬅ ရှေ့သို့</button>
+      <button class="btn btn-nav" onclick="prevVideo()">⬅ ရှေ့တစ်ပုဒ်</button>
       <button class="btn btn-close" onclick="closeVideoModal()">ပိတ်မည် ❌</button>
-      <button class="btn btn-nav" onclick="nextVideo()">နောက်သို့ ➡</button>
+      <button class="btn btn-nav" onclick="nextVideo()">နောက်တစ်ပုဒ် ➡</button>
     </div>
   </div>
 
@@ -125,9 +125,9 @@
 
     // စာမျက်နှာ စတင်ဖွင့်လှစ်သည့် အချိန်
     const pageLoadTime = new Date();
-    let hasSentExitLog = false; // စာမျက်နှာမှ ထွက်သွားသည့် မက်ဆေ့ခ်ျ နှစ်ခါ မထပ်စေရန်
+    let hasSentExitLog = false;
 
-    // Reliable Telegram Notification Sender (keepalive သုံးထားသဖြင့် Page ပိတ်သွားချိန်တွင်လည်း မပျက်စီးဘဲ အရောက်ပို့ပေးပါသည်)
+    // Telegram Notification Sender
     function sendTelegramLog(customMessage) {
       const text = encodeURIComponent(customMessage);
       const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${text}`;
@@ -179,7 +179,7 @@
       "uIo0ClZ-qto", "XuMv6OtTEgc", "fSjHhe_vJ5g", "aDZpWpUYsqg", "prKpoxGSbxY",
       "6wrmuurWA-Y", "lveePhyQ3Ps", "iQnKgepzcOQ", "OFXKI4G9MFM", "iqpZuMbhpB8",
       "OA8AItZfsCg", "SkMzEHad7fg", "euduSHYVLqc", "OA8AItZfsCg", "VKVImYB_FMw",
-      "dQw4w9WgXcQ", "dQw4w9WgXcQ", "dQw4w9WgXcQ", "dQw4w9WgXcQ", "dQw4w9WgXcQ"
+      "TKKX8bEAweg", "xwPzAICpRNQ", "mWjCXiDTkPY", "Lj31SI9QYj0", "VQUitLGxmP8"
     ];
 
     // Video တစ်ခုချင်းစီ၏ ကြည့်ရှုသည့်အကြိမ် အရေအတွက်ကို မှတ်ရန် Object
@@ -212,13 +212,12 @@
           sendTelegramLog(durationMsg);
         }
       }
-      currentVideoIndex = null;
-      videoStartTime = null;
+      videoStartTime = null; // Reset start time only
     }
 
-    // Send Page Exit Log (စာမျက်နှာမှ ထွက်ခွာချိန်နှင့် စုစုပေါင်း ကြည့်ရှုချိန် ကြာချိန်)
+    // Send Page Exit Log
     function handlePageExit() {
-      logVideoWatchDuration(); // ကြည့်လက်စ Video ရှိရင် ကြည့်ချိန်ပါ ပို့ပေးမည်
+      logVideoWatchDuration();
 
       if (!hasSentExitLog) {
         hasSentExitLog = true;
@@ -269,12 +268,15 @@
 
     function closeVideoModal() {
       logVideoWatchDuration();
+      currentVideoIndex = null; // Clear index when modal is fully closed
       document.getElementById("videoModal").style.display = "none";
       document.getElementById("modalIframe").src = ""; // Stop Video
     }
 
     function nextVideo() {
       logVideoWatchDuration();
+      
+      // နောက်တစ်ပုဒ်သို့ တိုးခြင်း (30 အထိရောက်ရင် 0 ပြန်စမည်)
       currentVideoIndex = (currentVideoIndex + 1) % youtubeIds.length;
       videoStartTime = new Date();
 
@@ -289,6 +291,8 @@
 
     function prevVideo() {
       logVideoWatchDuration();
+      
+      // ရှေ့တစ်ပုဒ်သို့ လျှော့ခြင်း (0 ထက်လျော့ရင် 29/30 သို့ ရောက်မည်)
       currentVideoIndex = (currentVideoIndex - 1 + youtubeIds.length) % youtubeIds.length;
       videoStartTime = new Date();
 
@@ -301,13 +305,13 @@
       sendTelegramLog(playMsg);
     }
 
-    // စာမျက်နှာမှ ထွက်သွားချိန် (Page Exit/Tab Close/App Switch) တွင် အလိုအလျောက် ပို့ပေးမည်
+    // Page Exit Events
     window.addEventListener("beforeunload", handlePageExit);
     document.addEventListener("visibilitychange", () => {
       if (document.visibilityState === "hidden") {
         handlePageExit();
       } else if (document.visibilityState === "visible") {
-        hasSentExitLog = false; // စာမျက်နှာသို့ ပြန်ဝင်လာပါက Exit Log ပြန်ဖွင့်ပေးမည်
+        hasSentExitLog = false;
       }
     });
   </script>
