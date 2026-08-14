@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎥 Video များ စုစည်းရာ 🎥</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 20px 10px;
+      font-family: sans-serif;
+      background: #0f172a;
+      color: white;
+      text-align: center;
+    }
+    h1 { color: #00c6ff; text-shadow: 0 0 10px rgba(0,198,255,0.5); font-size: 20px; }
+    .back-btn {
+      display: inline-block;
+      padding: 10px 20px;
+      background: #ff1493;
+      color: white;
+      text-decoration: none;
+      border-radius: 20px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .video-card {
+      background: #1e293b;
+      border-radius: 12px;
+      padding: 8px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .video-card:hover { transform: scale(1.05); }
+    .thumb {
+      width: 100%;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    .title { margin-top: 8px; font-size: 13px; color: #cbd5e1; font-weight: bold; }
+
+    /* Video Lightbox Modal (Full Screen for Mobile) */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.95);
+      justify-content: space-between;
+      align-items: center;
+      flex-direction: column;
+      padding: 15px 5px;
+    }
+    .video-container {
+      width: 100%;
+      max-width: 1000px;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 10px 0;
+    }
+    iframe {
+      width: 100%;
+      height: 100%;
+      max-height: 80vh;
+      border: none;
+      border-radius: 12px;
+    }
+    .controls {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+    }
+    .btn {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .btn-nav { background: #00c6ff; color: black; }
+    .btn-close { background: #ef4444; color: white; }
+  </style>
+</head>
+<body>
+
+  <a href="index.html" class="back-btn">⬅ ပင်မစာမျက်နှာသို့ ပြန်သွားမည်</a>
+  <h1>🎥 ပန်ဒါလေးအတွက် Video စုစည်းမှု (၃၀) 🎬</h1>
+
+  <div class="video-grid" id="videoGrid"></div>
+
+  <!-- Video Modal -->
+  <div class="modal" id="videoModal">
+    <div class="video-container">
+      <iframe id="modalIframe" src="" allowfullscreen></iframe>
+    </div>
+    <div class="title" id="videoTitle" style="font-size: 15px; margin-bottom: 10px;"></div>
+    <div class="controls">
+      <button class="btn btn-nav" onclick="prevVideo()">⬅ ရှေ့သို့</button>
+      <button class="btn btn-close" onclick="closeVideoModal()">ပိတ်မည် ❌</button>
+      <button class="btn btn-nav" onclick="nextVideo()">နောက်သို့ ➡</button>
+    </div>
+  </div>
+
+  <script>
+    // YouTube Video ID များကို ဒီနေရာမှာ ၃၀ ပြည့်အောင် ထည့်ပါ
+    const youtubeIds = [
+      "EGBH_JOzWtE", "0yHHq-sas20", "tjZTDANQbCE", "NbLFKtabZkk", "S4JzgUoNY-A",
+      "EgtOfa3sMzM", "wuEUdh3QcUQ", "ku93-G0xc0c", "6hKBKVbHP7s", "e0bJ1yBG5O8",
+      "uIo0ClZ-qto", "XuMv6OtTEgc", "fSjHhe_vJ5g", "aDZpWpUYsqg", "prKpoxGSbxY",
+      "6wrmuurWA-Y", "lveePhyQ3Ps", "iQnKgepzcOQ", "OFXKI4G9MFM", "iqpZuMbhpB8",
+      "OA8AItZfsCg", "SkMzEHad7fg", "euduSHYVLqc", "OA8AItZfsCg", "VKVImYB_FMw",
+      "dQw4w9WgXcQ", "dQw4w9WgXcQ", "dQw4w9WgXcQ", "dQw4w9WgXcQ", "dQw4w9WgXcQ"
+    ];
+
+    let currentVideoIndex = 0;
+    const container = document.getElementById("videoGrid");
+
+    youtubeIds.forEach((id, index) => {
+      const card = document.createElement("div");
+      card.className = "video-card";
+      card.onclick = () => openVideoModal(index);
+      card.innerHTML = `
+        <img class="thumb" src="https://img.youtube.com/vi/${id}/hqdefault.jpg">
+        <div class="title">🎬 Video #${index + 1}</div>
+      `;
+      container.appendChild(card);
+    });
+
+    function openVideoModal(index) {
+      currentVideoIndex = index;
+      updateVideoModal();
+      document.getElementById("videoModal").style.display = "flex";
+    }
+
+    function updateVideoModal() {
+      const id = youtubeIds[currentVideoIndex];
+      document.getElementById("modalIframe").src = `https://www.youtube.com/embed/${id}?autoplay=1`;
+      document.getElementById("videoTitle").innerText = `🎬 Video #${currentVideoIndex + 1} / ${youtubeIds.length}`;
+    }
+
+    function closeVideoModal() {
+      document.getElementById("videoModal").style.display = "none";
+      document.getElementById("modalIframe").src = ""; // Stop Video
+    }
+
+    function nextVideo() {
+      currentVideoIndex = (currentVideoIndex + 1) % youtubeIds.length;
+      updateVideoModal();
+    }
+
+    function prevVideo() {
+      currentVideoIndex = (currentVideoIndex - 1 + youtubeIds.length) % youtubeIds.length;
+      updateVideoModal();
+    }
+  </script>
+</body>
+</html>
