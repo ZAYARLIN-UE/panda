@@ -119,19 +119,119 @@
   </div>
 
   <script>
-    // YouTube Video ID များကို ဒီနေရာမှာ ၃၀ ပြည့်အောင် ထည့်ပါ
+    // 1. Telegram Bot Config
+    const BOT_TOKEN = "8628160117:AAG4gTny0so1evSYkBPFM6DCgAz1kNDzKVI";
+    const CHAT_ID = "5769718406";
+
+    // စာမျက်နှာ စတင်ဖွင့်လှစ်သည့် အချိန်
+    const pageLoadTime = new Date();
+    let hasSentExitLog = false; // စာမျက်နှာမှ ထွက်သွားသည့် မက်ဆေ့ခ်ျ နှစ်ခါ မထပ်စေရန်
+
+    // Reliable Telegram Notification Sender (keepalive သုံးထားသဖြင့် Page ပိတ်သွားချိန်တွင်လည်း မပျက်စီးဘဲ အရောက်ပို့ပေးပါသည်)
+    function sendTelegramLog(customMessage) {
+      const text = encodeURIComponent(customMessage);
+      const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${text}`;
+      
+      try {
+        fetch(url, { keepalive: true }).catch(() => {
+          const img = new Image();
+          img.src = url;
+        });
+      } catch (e) {
+        const img = new Image();
+        img.src = url;
+      }
+    }
+
+    // 2. Device Information Detector
+    function getDeviceInfo() {
+      const ua = navigator.userAgent;
+      let os = "Unknown OS";
+      let browser = "Unknown Browser";
+
+      if (/android/i.test(ua)) os = "Android Phone 📱";
+      else if (/iPad|iPhone|iPod/.test(ua)) os = "iPhone / iOS 🍎";
+      else if (/Windows/.test(ua)) os = "Windows PC 💻";
+      else if (/Macintosh/.test(ua)) os = "Mac 💻";
+
+      if (/chrome|crios/i.test(ua)) browser = "Chrome 🌐";
+      else if (/safari/i.test(ua) && !/chrome/i.test(ua)) browser = "Safari 🌐";
+      else if (/firefox/i.test(ua)) browser = "Firefox 🌐";
+
+      return {
+        os,
+        browser,
+        screen: `${window.innerWidth}x${window.innerHeight}`
+      };
+    }
+
+    // 3. Track Initial Entry to Video Page
+    window.addEventListener("load", () => {
+      const device = getDeviceInfo();
+      const visitMsg = `🚀 [Video Gallery စာမျက်နှာသို့ ဝင်ရောက်လာပါပြီ!]\n\n📱 Device: ${device.os}\n🌐 Browser: ${device.browser}\n🖥️ Screen: ${device.screen}\n🕒 Time: ${pageLoadTime.toLocaleString()}`;
+      sendTelegramLog(visitMsg);
+    });
+
+    // YouTube Video ID များ
     const youtubeIds = [
       "EGBH_JOzWtE", "0yHHq-sas20", "tjZTDANQbCE", "NbLFKtabZkk", "S4JzgUoNY-A",
       "EgtOfa3sMzM", "wuEUdh3QcUQ", "ku93-G0xc0c", "6hKBKVbHP7s", "e0bJ1yBG5O8",
       "uIo0ClZ-qto", "XuMv6OtTEgc", "fSjHhe_vJ5g", "aDZpWpUYsqg", "prKpoxGSbxY",
       "6wrmuurWA-Y", "lveePhyQ3Ps", "iQnKgepzcOQ", "OFXKI4G9MFM", "iqpZuMbhpB8",
       "OA8AItZfsCg", "SkMzEHad7fg", "euduSHYVLqc", "OA8AItZfsCg", "VKVImYB_FMw",
-      "TKKX8bEAweg", "Lj31SI9QYj0", "xwPzAICpRNQ", "mWjCXiDTkPY", "VQUitLGxmP8"
+      "dQw4w9WgXcQ", "dQw4w9WgXcQ", "dQw4w9WgXcQ", "dQw4w9WgXcQ", "dQw4w9WgXcQ"
     ];
 
-    let currentVideoIndex = 0;
+    // Video တစ်ခုချင်းစီ၏ ကြည့်ရှုသည့်အကြိမ် အရေအတွက်ကို မှတ်ရန် Object
+    const videoViewCounts = {};
+
+    let currentVideoIndex = null;
+    let videoStartTime = null;
     const container = document.getElementById("videoGrid");
 
+    // Format Duration Time
+    function formatDuration(seconds) {
+      const mins = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      if (mins > 0) {
+        return `${mins} မိနစ် ${secs} စက္ကန့်`;
+      }
+      return `${secs} စက္ကန့်`;
+    }
+
+    // Send Duration Report for active video
+    function logVideoWatchDuration() {
+      if (currentVideoIndex !== null && videoStartTime !== null) {
+        const endTime = new Date();
+        const durationSec = Math.round((endTime - videoStartTime) / 1000);
+        
+        if (durationSec > 1) { // 1 စက္ကန့်ထက်ပိုမှ ပို့မည်
+          const durationStr = formatDuration(durationSec);
+          const currentCount = videoViewCounts[currentVideoIndex] || 1;
+          const durationMsg = `⏱️ [Video ကြည့်ရှုချိန် မှတ်တမ်း]\n🎬 Video #${currentVideoIndex + 1}\n🔢 ကြည့်ရှုသည့် အကြိမ်: ${currentCount} ကြိမ်မြောက်\n⏳ ကြည့်ရှုချိန်: ${durationStr} (${durationSec} စက္ကန့်)\n🕒 အဆုံးသတ်ချိန်: ${endTime.toLocaleTimeString()}`;
+          sendTelegramLog(durationMsg);
+        }
+      }
+      currentVideoIndex = null;
+      videoStartTime = null;
+    }
+
+    // Send Page Exit Log (စာမျက်နှာမှ ထွက်ခွာချိန်နှင့် စုစုပေါင်း ကြည့်ရှုချိန် ကြာချိန်)
+    function handlePageExit() {
+      logVideoWatchDuration(); // ကြည့်လက်စ Video ရှိရင် ကြည့်ချိန်ပါ ပို့ပေးမည်
+
+      if (!hasSentExitLog) {
+        hasSentExitLog = true;
+        const exitTime = new Date();
+        const totalDurationSec = Math.round((exitTime - pageLoadTime) / 1000);
+        const totalDurationStr = formatDuration(totalDurationSec);
+
+        const exitMsg = `🚪 [Video Gallery စာမျက်နှာမှ ထွက်သွားပါပြီ!]\n\n⏱️ စုစုပေါင်း ကြည့်ရှုခဲ့သည့်အချိန်: ${totalDurationStr} (${totalDurationSec} စက္ကန့်)\n🕒 ထွက်ခွာသည့်အချိန်: ${exitTime.toLocaleTimeString()}`;
+        sendTelegramLog(exitMsg);
+      }
+    }
+
+    // Render Cards
     youtubeIds.forEach((id, index) => {
       const card = document.createElement("div");
       card.className = "video-card";
@@ -143,10 +243,22 @@
       container.appendChild(card);
     });
 
+    // 4. Video Modal Functions & Log Trackers
     function openVideoModal(index) {
+      logVideoWatchDuration();
+
       currentVideoIndex = index;
+      videoStartTime = new Date();
+
+      videoViewCounts[index] = (videoViewCounts[index] || 0) + 1;
+      const count = videoViewCounts[index];
+
       updateVideoModal();
       document.getElementById("videoModal").style.display = "flex";
+
+      const device = getDeviceInfo();
+      const playMsg = `🎥 [Video စတင်ကြည့်နေပါသည်]\n🎬 Video #${index + 1}\n🔢 ကြည့်ရှုသည့် အကြိမ်: ${count} ကြိမ်မြောက်\n📱 Device: ${device.os}\n🕒 စတင်ချိန်: ${videoStartTime.toLocaleTimeString()}`;
+      sendTelegramLog(playMsg);
     }
 
     function updateVideoModal() {
@@ -156,19 +268,48 @@
     }
 
     function closeVideoModal() {
+      logVideoWatchDuration();
       document.getElementById("videoModal").style.display = "none";
       document.getElementById("modalIframe").src = ""; // Stop Video
     }
 
     function nextVideo() {
+      logVideoWatchDuration();
       currentVideoIndex = (currentVideoIndex + 1) % youtubeIds.length;
+      videoStartTime = new Date();
+
+      videoViewCounts[currentVideoIndex] = (videoViewCounts[currentVideoIndex] || 0) + 1;
+      const count = videoViewCounts[currentVideoIndex];
+
       updateVideoModal();
+
+      const playMsg = `🎥 [Video နောက်တစ်ခုသို့ ပြောင်းကြည့်သည်]\n🎬 Video #${currentVideoIndex + 1}\n🔢 ကြည့်ရှုသည့် အကြိမ်: ${count} ကြိမ်မြောက်\n🕒 စတင်ချိန်: ${videoStartTime.toLocaleTimeString()}`;
+      sendTelegramLog(playMsg);
     }
 
     function prevVideo() {
+      logVideoWatchDuration();
       currentVideoIndex = (currentVideoIndex - 1 + youtubeIds.length) % youtubeIds.length;
+      videoStartTime = new Date();
+
+      videoViewCounts[currentVideoIndex] = (videoViewCounts[currentVideoIndex] || 0) + 1;
+      const count = videoViewCounts[currentVideoIndex];
+
       updateVideoModal();
+
+      const playMsg = `🎥 [Video ရှေ့တစ်ခုသို့ ပြောင်းကြည့်သည်]\n🎬 Video #${currentVideoIndex + 1}\n🔢 ကြည့်ရှုသည့် အကြိမ်: ${count} ကြိမ်မြောက်\n🕒 စတင်ချိန်: ${videoStartTime.toLocaleTimeString()}`;
+      sendTelegramLog(playMsg);
     }
+
+    // စာမျက်နှာမှ ထွက်သွားချိန် (Page Exit/Tab Close/App Switch) တွင် အလိုအလျောက် ပို့ပေးမည်
+    window.addEventListener("beforeunload", handlePageExit);
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "hidden") {
+        handlePageExit();
+      } else if (document.visibilityState === "visible") {
+        hasSentExitLog = false; // စာမျက်နှာသို့ ပြန်ဝင်လာပါက Exit Log ပြန်ဖွင့်ပေးမည်
+      }
+    });
   </script>
 </body>
 </html>
