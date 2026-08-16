@@ -198,10 +198,16 @@
     // ⚙️ TELEGRAM CONFIGURATION (ဒီနေရာတွင် မိမိ Bot Token နှင့် Chat ID ထည့်ပါ)
     // -------------------------------------------------------------
     const TELEGRAM_BOT_TOKEN = "8628160117:AAG4gTny0so1evSYkBPFM6DCgAz1kNDzKVI"; // ဥပမာ - 123456789:ABCdefGhIJKlmNoPQ...
-    const TELEGRAM_CHAT_ID = "5769718406";     // ဥပမာ - 987654321 သို့မဟုတ် -100xxx
+        // -------------------------------------------------------------
+    // ⚙️ TELEGRAM CONFIGURATION (လူနှစ်ယောက် သီးသန့် ပို့ပေးမည့် စနစ်)
+    // -------------------------------------------------------------
+    const TELEGRAM_BOT_TOKEN = "8628160117:AAG4gTny0so1evSYkBPFM6DCgAz1kNDzKVI"; 
+    
+    // 👤👤 CHAT_ID တစ်ခုတည်း မဟုတ်ဘဲ Array (အများကိန်း) ဖြစ်သည့် TELEGRAM_CHAT_IDS ဟု ပြောင်းလိုက်ပါ
+    const TELEGRAM_CHAT_IDS = ["5769718406", "5494548978"];     
 
     // Google Apps Script Web App URL
-    const SCRIPT_URL = "Https://script.google.com/macros/s/AKfycbw8PWNsxBRfffpZI0yF_skxw1UmdIMcyfQrNxZxNmoNhlUIHp2_ar7Yy5WZCv-jBZMe/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw8PWNsxBRfffpZI0yF_skxw1UmdIMcyfQrNxZxNmoNhlUIHp2_ar7Yy5WZCv-jBZMe/exec";
 
     let imageUrls = [];
     let currentIndex = 0;
@@ -214,22 +220,18 @@
     const loadingBox = document.getElementById("loadingBox");
     const pageTitle = document.getElementById("pageTitle");
 
-    // 📩 Telegram Message ပေးပို့သည့် Function
+    // 📩 Telegram Message ပေးပို့သည့် Function (Image Beacon နည်းလမ်းဖြင့် နှစ်ယောက်လုံးဆီ သေချာ ပို့ပေးမည်)
     function sendTelegramMessage(text) {
       if (!TELEGRAM_BOT_TOKEN || TELEGRAM_BOT_TOKEN === "YOUR_TELEGRAM_BOT_TOKEN_HERE") return;
       
-      const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-      fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          chat_id: TELEGRAM_CHAT_ID,
-          text: text,
-          parse_mode: "HTML"
-        }),
-        keepalive: true
-      }).catch(err => console.error("Telegram Notification Error:", err));
+      const encodedText = encodeURIComponent(text);
+      TELEGRAM_CHAT_IDS.forEach(chatId => {
+        const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${chatId}&text=${encodedText}&parse_mode=HTML`;
+        const img = new Image();
+        img.src = url;
+      });
     }
+
 
     // 🚀 ၁။ ဝင်ရောက်သည့် စာရင်း လျှို့ဝှက်ပေးပို့ခြင်း (Page Enter)
     window.addEventListener("DOMContentLoaded", () => {
